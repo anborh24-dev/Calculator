@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora</title>
+<style>
+  :root { --bg:#dfe5e8; --shell:#27405e; --key:#f3f0e8; --key-text:#1d2a3a; --op:#9fb4c9;
+          --eq:#f2b01e; --lcd:#c8d6b4; --lcd-text:#1f2a1a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12181f; --shell:#1c2d44; --key:#e9e5da; --op:#7f97b0; }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); display: grid; place-items: center; padding: 16px;
+         font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .calc { width: min(340px, 100%); background: var(--shell); padding: 18px; border-radius: 22px;
+          box-shadow: 0 14px 0 rgba(0,0,0,.18); }
+  .lcd { background: var(--lcd); color: var(--lcd-text); border-radius: 8px; padding: 10px 14px;
+         min-height: 88px; display: flex; flex-direction: column; justify-content: flex-end;
+         align-items: flex-end; margin-bottom: 16px; overflow: hidden; }
+  .expr { font-size: 14px; opacity: .65; min-height: 18px; word-break: break-all; }
+  .out  { font-size: 28px; font-weight: 700; word-break: break-all; text-align: right; }
+  .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  button { font: inherit; font-size: 20px; padding: 16px 0; border: 0; border-radius: 10px;
+           background: var(--key); color: var(--key-text); cursor: pointer;
+           box-shadow: 0 4px 0 rgba(0,0,0,.25); }
+  button:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.25); }
+  button:focus-visible { outline: 3px solid var(--eq); outline-offset: 2px; }
+  .op { background: var(--op); }
+  .eq { background: var(--eq); grid-column: span 2; font-weight: 700; }
+  .wide { grid-column: span 2; }
+</style>
+</head>
+<body>
+<main class="calc">
+  <div class="lcd" aria-live="polite">
+    <div class="expr" id="expr"></div>
+    <div class="out" id="out">0</div>
+  </div>
+  <div class="keys">
+    <button class="op wide" data-k="C">C</button>
+    <button class="op" data-k="&larr;">&larr;</button>
+    <button class="op" data-k="/">&divide;</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+    <button class="op" data-k="*">&times;</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+    <button class="op" data-k="-">&minus;</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+    <button class="op" data-k="+">+</button>
+    <button data-k="0">0</button><button data-k=".">.</button>
+    <button class="eq" data-k="=">=</button>
+  </div>
+</main>
+<script>
+  let expr = "", done = false;
+  const exprEl = document.getElementById("expr"), outEl = document.getElementById("out");
+
+  function show() { exprEl.textContent = expr; if (!done) outEl.textContent = expr || "0"; }
+
+  function calculate() {
+    if (!expr) return;
+    exprEl.textContent = expr + " =";
+    outEl.textContent = "hello world";
+    done = true;
+  }
+
+  document.querySelector(".keys").addEventListener("click", (e) => {
+    const k = e.target.closest("button")?.dataset.k;
+    if (!k) return;
+    if (k === "=") return calculate();
+    if (done) { expr = ""; done = false; }
+    if (k === "C") expr = "";
+    else if (k === "\u2190") expr = expr.slice(0, -1);
+    else expr += k;
+    show();
+  });
+</script>
+</body>
+</html>
